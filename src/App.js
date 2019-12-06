@@ -5,29 +5,18 @@ import Todos from './components/Todos.jsx';
 import AddTodo from './components/AddTodo.jsx';
 import About from './components/pages/About.jsx';
 import uuid from 'uuid';
-
+import Axios from 'axios';
 import './App.css';
 
 class App extends Component {
   state = {
-    todos: [
-      {
-        id: uuid.v4(),
-        title: 'Take out the trash',
-        completed: false
-      },
-      {
-        id: uuid.v4(),
-        title: 'Dinner with dog',
-        completed: false
-      },
-      {
-        id: uuid.v4(),
-        title: 'Playing poker',
-        completed: false
-      },
-    ]
+    todos: []
   };
+
+  componentDidMount() {
+    Axios.get('https://jsonplaceholder.typicode.com/todos?_limit=10')
+      .then(res => this.setState({todos: res.data}));
+  }
 
   markComplete = (id) => {
     this.setState({todos: this.state.todos.map(todo => {
@@ -43,12 +32,16 @@ class App extends Component {
   }
 
   addTodo = (title) => {
-    const newTodo = {
-      id: uuid.v4(),
+    // const newTodo = {
+    //   id: uuid.v4(),
+    //   title,
+    //   completed: false
+    // }
+    Axios.post('https://jsonplaceholder.typicode.com/todos', {
       title,
       completed: false
-    }
-    this.setState({todos: [...this.state.todos, newTodo]});
+    })
+      .then(res => this.setState({todos: [...this.state.todos, res.data]}));
   }
 
   render() {
